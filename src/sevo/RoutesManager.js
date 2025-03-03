@@ -37,4 +37,28 @@ export class RoutesManager {
         }
         return false;
     }
+
+    getRouteByDynamicPattern(pattern) {
+        const inputPatternSpitted = pattern.split("/");
+        if (inputPatternSpitted.length <= 2) {
+            return this.getRouteByPattern(pattern);
+        }
+        // start loop
+        for (const route of this._routes) {
+            const routePatternSpitted = route.pattern.split("/");
+
+            if (routePatternSpitted.length === inputPatternSpitted.length) {
+                if (routePatternSpitted[1] === routePatternSpitted[1]) {
+                    return route;
+                }
+            }
+            // console.log(inputPatternSpitted);
+            // console.log(routePatternSpitted);
+        }
+        return false;
+    }
+
+    get routes() {
+        return this._routes;
+    }
 }

@@ -12,6 +12,11 @@ function route_handler(route) {
     ContentLoader.load(`pages/${filename}`, content);
 }
 
+function person_detail(route, name, age) {
+    ContentLoader.load(`pages/person.html`, content);
+    console.log("person_detail", route, name, age);
+}
+
 const routesManager = new RoutesManager();
 routesManager.addRoute(
     new Route({ pattern: "/", name: "page:index", handler: route_handler })
@@ -30,15 +35,28 @@ routesManager.addRoute(
         handler: route_handler,
     })
 );
+routesManager.addRoute(
+    new Route({
+        pattern: "/person/:name/:age",
+        name: "person:detail",
+        handler: person_detail,
+    })
+);
 
 HashRouter.onInit = HashRouter.onHashChange = (hash) => {
-    const pattern = hash.substring(1);
+    const inputPattern = hash.substring(1);
+    const inputPatternSpitted = inputPattern.substring(1).split("/");
+    console.log(
+        "HashRouter onInit/Change inputPatternSpitted: ",
+        inputPatternSpitted
+    );
     if (hash === "" || hash === "#") {
         HashRouter.write("#/");
     }
-    const route = routesManager.getRouteByPattern(pattern);
+    const route = routesManager.getRouteByDynamicPattern(inputPattern);
+    const params = inputPatternSpitted.slice(1);
     if (route) {
-        route.handler(route);
+        route.handler(route, ...params);
     } else {
         ContentLoader.load(`pages/404.html`, content);
     }
@@ -50,7 +68,21 @@ const dataRoutes = document.querySelectorAll("[data-route]");
 dataRoutes.forEach((link) => {
     link.addEventListener("click", (e) => {
         e.preventDefault();
-        const route = routesManager.getRouteByName(e.target.dataset.route);
-        HashRouter.write(route.pattern);
+        const dataRoute = e.target.dataset.route;
+        const dataRouteSplitted = dataRoute.split("/");
+        const dataName = dataRouteSplitted[0];
+        const dataParams = dataRouteSplitted.slice(1);
+        const route = routesManager.getRouteByName(dataName);
+
+        if (route) {
+            const routePatternSplitted = route.pattern.split("/:");
+            let path = routePatternSplitted[0];
+            if (dataRouteSplitted.length > 1) {
+                path += "/";
+            }
+            path = path + dataParams.join("/");
+
+            HashRouter.write(path);
+        }
     });
 });

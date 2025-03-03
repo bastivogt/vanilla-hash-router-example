@@ -16,7 +16,13 @@ export class HashRouter {
         return hash;
     }
 
-    static write(str) {
-        window.location.hash = str;
+    static write(str, params = null) {
+        const path = str;
+        if (params) {
+            for (const prop in params) {
+                path = path.replaceAll(`:${prop}`, params[prop]);
+            }
+        }
+        window.location.hash = path;
     }
 }
