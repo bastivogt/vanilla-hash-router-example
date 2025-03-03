@@ -27,7 +27,6 @@ function getMatchTokens() {
 
 function getRoute(pattern) {
     const matchTokens = getMatchTokens();
-    console.log(matchTokens);
     const index = matchTokens.findIndex((item) => {
         console.log(item);
         if (item === "/" && pattern.startsWith(item) && pattern.length < 2) {
@@ -35,18 +34,7 @@ function getRoute(pattern) {
         }
         return pattern.startsWith(item) && item !== "/";
     });
-    // let index = -1;
-    // for (let i = 0; i < matchTokens.length; i++) {
-    //     if (pattern === "/") {
-    //         console.log(matchTokens[i]);
-    //         break;
-    //     }
-    //     if (pattern.startsWith(matchTokens[i])) {
-    //         console.log(matchTokens[i]);
-    //     }
-    // }
 
-    console.log(index);
     const routePatternSplitted = routes[index].pattern.split("/");
     const matchTokenSplitted = matchTokens[index].split("/");
     const patternSplitted = pattern.split("/");
@@ -62,13 +50,7 @@ function getRoute(pattern) {
     for (const prop in paramsPattern) {
         paramsObj[paramsPattern[prop].slice(1)] = params[prop];
     }
-    console.log(
-        "rs, ms, pp, p",
-        routePatternSplitted,
-        matchTokenSplitted,
-        paramsPattern,
-        params
-    );
+
     return {
         route: routes[index],
         matchToken: matchTokens[index],
